@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // or use fetch()
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const Messages = ({ refresh }) => {
+const Messages = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -9,7 +10,16 @@ const Messages = ({ refresh }) => {
     axios.get('http://localhost:3000/api/messages')
       .then(response => setMessages(response.data.messages))
       .catch(error => console.error('Error fetching messages:', error));
-  }, [refresh]);
+  }, []);
+
+  const clearMessages = () => {
+    axios.delete('http://localhost:3000/api/messages')
+      .then(() => {
+        // Clear the messages from state after deleting
+        setMessages([]);
+      })
+      .catch(error => console.error('Error clearing messages:', error));
+  };
 
   return (
     <div>
@@ -21,6 +31,10 @@ const Messages = ({ refresh }) => {
           </li>
         ))}
       </ul>
+      <button onClick={clearMessages}>Clear Messages</button>
+      <Link to="/new">
+        <button>Add New Message</button>
+      </Link>
     </div>
   );
 };
